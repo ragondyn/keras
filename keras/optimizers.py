@@ -82,7 +82,7 @@ class Optimizer(object):
         self.weights = []
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         raise NotImplementedError
 
     def get_gradients(self, loss, params):
@@ -252,7 +252,7 @@ class RMSprop(Optimizer):
         self.initial_decay = decay
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         accumulators = [K.zeros(K.int_shape(p), dtype=K.dtype(p)) for p in params]
         self.weights = accumulators
@@ -318,7 +318,7 @@ class Adagrad(Optimizer):
         self.initial_decay = decay
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -391,7 +391,7 @@ class Adadelta(Optimizer):
         self.initial_decay = decay
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -471,7 +471,7 @@ class Adam(Optimizer):
         self.amsgrad = amsgrad
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -556,7 +556,7 @@ class Adamax(Optimizer):
         self.initial_decay = decay
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -638,7 +638,7 @@ class Nadam(Optimizer):
         self.schedule_decay = schedule_decay
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -702,7 +702,7 @@ class TFOptimizer(Optimizer):
             self.iterations = K.variable(0, dtype='int64', name='iterations')
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params, params_lr_mult):
         grads = self.optimizer.compute_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
         opt_update = self.optimizer.apply_gradients(
