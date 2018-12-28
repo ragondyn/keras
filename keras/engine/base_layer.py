@@ -121,11 +121,17 @@ class Layer(object):
                           'name',
                           'trainable',
                           'weights',
+                          'lr_mult',
                           'input_dtype',  # legacy
                           }
         for kwarg in kwargs:
             if kwarg not in allowed_kwargs:
                 raise TypeError('Keyword argument not understood:', kwarg)
+        lr_mult = kwargs.get('lr_mult')
+        if lr_mult is None:
+            lr_mult = 1.0
+        self.lr_mult = lr_mult
+
         name = kwargs.get('name')
         if not name:
             prefix = self.__class__.__name__
@@ -194,6 +200,14 @@ class Layer(object):
     def built(self, value):
         self._built = value
 
+    @property
+    def trainable_weights_lr_mult(self):
+        trainable = getattr(self, 'trainable', True)
+        if trainable:
+            return [self.lr_mult]
+        else:
+            return []
+    
     @property
     def trainable_weights(self):
         trainable = getattr(self, 'trainable', True)
@@ -1083,7 +1097,8 @@ class Layer(object):
             Python dictionary.
         """
         config = {'name': self.name,
-                  'trainable': self.trainable}
+                  'trainable': self.trainable,
+                'lr_mult': self.lr_mult}
         if hasattr(self, 'batch_input_shape'):
             config['batch_input_shape'] = self.batch_input_shape
         if hasattr(self, 'dtype'):

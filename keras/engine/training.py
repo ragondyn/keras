@@ -471,7 +471,7 @@ class Model(Network):
         # Collected trainable weights, sorted in topological order.
         trainable_weights = self.trainable_weights
         self._collected_trainable_weights = trainable_weights
-
+        #self.trainable_weights_lr_mult
     def _check_trainable_weights_consistency(self):
         """Check trainable weights count consistency.
 
@@ -506,7 +506,8 @@ class Model(Network):
                 with K.name_scope(self.optimizer.__class__.__name__):
                     training_updates = self.optimizer.get_updates(
                         params=self._collected_trainable_weights,
-                        loss=self.total_loss)
+                        loss=self.total_loss,
+                        params_lr_mult = self.trainable_weights_lr_mult)
                 updates = (self.updates +
                            training_updates +
                            self.metrics_updates)

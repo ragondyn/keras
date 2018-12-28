@@ -469,6 +469,15 @@ class Network(Layer):
         return weights
 
     @property
+    def trainable_weights_lr_mult(self):
+        if not self.trainable:
+            return []
+        weights = []
+        for layer in self.layers:
+            weights += layer.trainable_weights_lr_mult
+        return weights
+
+    @property
     def non_trainable_weights(self):
         weights = []
         for layer in self.layers:

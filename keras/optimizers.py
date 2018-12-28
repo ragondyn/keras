@@ -180,7 +180,7 @@ class SGD(Optimizer):
         self.nesterov = nesterov
 
     @interfaces.legacy_get_updates_support
-    def get_updates(self, loss, params):
+    def get_updates(self, loss, params,params_lr_mult):
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -192,12 +192,12 @@ class SGD(Optimizer):
         shapes = [K.int_shape(p) for p in params]
         moments = [K.zeros(shape) for shape in shapes]
         self.weights = [self.iterations] + moments
-        for p, g, m in zip(params, grads, moments):
-            v = self.momentum * m - lr * g  # velocity
+        for p, g, m, lr_mult in zip(params, grads, moments,params_lr_mult):
+            v = self.momentum * m - lr_mult*lr * g  # velocity
             self.updates.append(K.update(m, v))
 
             if self.nesterov:
-                new_p = p + self.momentum * v - lr * g
+                new_p = p + self.momentum * v - lr_mult*lr * g
             else:
                 new_p = p + v
 
