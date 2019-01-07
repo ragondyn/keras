@@ -204,7 +204,7 @@ class Layer(object):
     def trainable_weights_lr_mult(self):
         trainable = getattr(self, 'trainable', True)
         if trainable:
-            return [self.lr_mult]
+            return [self.lr_mult]*len(self.trainable_weights)
         else:
             return []
     
