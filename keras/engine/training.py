@@ -471,7 +471,7 @@ class Model(Network):
         # Collected trainable weights, sorted in topological order.
         trainable_weights = self.trainable_weights
         self._collected_trainable_weights = trainable_weights
-        #self.trainable_weights_lr_mult
+
     def _check_trainable_weights_consistency(self):
         """Check trainable weights count consistency.
 
