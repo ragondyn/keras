@@ -507,7 +507,7 @@ class Model(Network):
                     training_updates = self.optimizer.get_updates(
                         params=self._collected_trainable_weights,
                         loss=self.total_loss,
-                        params_lr_mult = self.trainable_lr_mults)
+                        param_lr_mults = self.trainable_lr_mults)
                 updates = (self.updates +
                            training_updates +
                            self.metrics_updates)
