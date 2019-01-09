@@ -204,10 +204,10 @@ class Layer(object):
     def trainable_lr_mults(self):
         trainable = getattr(self, 'trainable', True)
         if trainable:
-            return [self.lr_mult]*len(self.trainable_weights)
+            return [self.lr_mult] * len(self.trainable_weights)
         else:
             return []
-    
+
     @property
     def trainable_weights(self):
         trainable = getattr(self, 'trainable', True)
@@ -1098,7 +1098,7 @@ class Layer(object):
         """
         config = {'name': self.name,
                   'trainable': self.trainable,
-                'lr_mult': self.lr_mult}
+                  'lr_mult': self.lr_mult}
         if hasattr(self, 'batch_input_shape'):
             config['batch_input_shape'] = self.batch_input_shape
         if hasattr(self, 'dtype'):

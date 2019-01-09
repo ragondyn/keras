@@ -62,32 +62,30 @@ def _test_optimizer(optimizer, target=0.75):
     assert_allclose(kernel, 1.)
     assert_allclose(bias, 2.)
 
-    # Test lrmutl.
+    # Test lr_mult
 
     model = Sequential()
-    dense = (Dense(10, input_shape=(x_train.shape[1],),lr_mult = 0.0))
+    dense = (Dense(10, input_shape=(x_train.shape[1],), lr_mult=0.0))
     model.add(dense)
-    model.add(Dense(10, lr_mult = 0.0))
+    model.add(Dense(10, lr_mult=0.0))
     model.add(Activation('relu'))
     model.add(Dense(y_train.shape[1]))
     model.add(Activation('softmax'))
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=['accuracy'])
-    
+
     kernel, bias = dense.get_weights()
     history = model.fit(x_train, y_train, epochs=2, batch_size=16, verbose=0)
     kernel_new, bias_new = dense.get_weights()
     assert np.array_equal(kernel_new, kernel)
     assert np.array_equal(bias_new, bias)
 
-
     model = Sequential()
-    dense = (Dense(10, input_shape=(x_train.shape[1],),lr_mult = 1.0))
+    dense = (Dense(10, input_shape=(x_train.shape[1],), lr_mult=1.0))
     model.add(dense)
-    
-    dense2 = (Dense(10, lr_mult = 0.0))
-    #model.add(Dense(10, lr_mult = 0.0))
+
+    dense2 = (Dense(10, lr_mult=0.0))
     model.add(dense2)
     model.add(Activation('relu'))
     model.add(Dense(y_train.shape[1]))
@@ -95,18 +93,19 @@ def _test_optimizer(optimizer, target=0.75):
     model.compile(loss='categorical_crossentropy',
                   optimizer=optimizer,
                   metrics=['accuracy'])
-    
+
     kernel, bias = dense.get_weights()
     kernel2, bias2 = dense2.get_weights()
     history = model.fit(x_train, y_train, epochs=2, batch_size=16, verbose=0)
     kernel_new, bias_new = dense.get_weights()
     kernel2_new, bias2_new = dense2.get_weights()
-    
+
     assert not np.array_equal(kernel_new, kernel)
     assert not np.array_equal(bias_new, bias)
 
     assert np.array_equal(kernel2_new, kernel2)
     assert np.array_equal(bias2_new, bias2)
+
 
 @pytest.mark.skipif((K.backend() != 'tensorflow'),
                     reason="Only Tensorflow raises a "

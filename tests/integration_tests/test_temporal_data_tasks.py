@@ -151,7 +151,6 @@ def test_stacked_lstm_char_prediction():
     ])
     model.compile(loss='categorical_crossentropy', optimizer='adam')
     model.fit(x, y, batch_size=1, epochs=60, verbose=1)
-    
 
     # prime the model with 'ab' sequence and let it generate the learned alphabet
     sentence = alphabet[:sequence_length]
@@ -217,5 +216,4 @@ def test_embedding_with_clipnorm():
 
 
 if __name__ == '__main__':
-    test_stacked_lstm_char_prediction()
-    #pytest.main([__file__])
+    pytest.main([__file__])

@@ -195,11 +195,11 @@ class SGD(Optimizer):
         moments = [K.zeros(shape) for shape in shapes]
         self.weights = [self.iterations] + moments
         for p, g, m, lr_mult in zip(params, grads, moments, param_lr_mults):
-            v = self.momentum * m - lr_mult*lr * g  # velocity
+            v = self.momentum * m - lr_mult * lr * g  # velocity
             self.updates.append(K.update(m, v))
 
             if self.nesterov:
-                new_p = p + self.momentum * v - lr_mult*lr * g
+                new_p = p + self.momentum * v - lr_mult * lr * g
             else:
                 new_p = p + v
 
@@ -323,10 +323,10 @@ class Adagrad(Optimizer):
 
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params, param_lr_mults=None):
-        
+
         if param_lr_mults is None:
             param_lr_mults = [1.0] * len(params)
-        
+
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -400,10 +400,10 @@ class Adadelta(Optimizer):
 
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params, param_lr_mults=None):
-        
+
         if param_lr_mults is None:
             param_lr_mults = [1.0] * len(params)
-        
+
         grads = self.get_gradients(loss, params)
         shapes = [K.int_shape(p) for p in params]
         accumulators = [K.zeros(shape) for shape in shapes]
@@ -416,8 +416,8 @@ class Adadelta(Optimizer):
             lr = lr * (1. / (1. + self.decay * K.cast(self.iterations,
                                                       K.dtype(self.decay))))
 
-        for p, g, a, d_a, lr_mult in zip(params, grads, accumulators, delta_accumulators, 
-                                param_lr_mults):
+        for p, g, a, d_a, lr_mult in zip(params, grads, accumulators,
+                                         delta_accumulators, param_lr_mults):
             # update accumulator
             new_a = self.rho * a + (1. - self.rho) * K.square(g)
             self.updates.append(K.update(a, new_a))
@@ -487,7 +487,7 @@ class Adam(Optimizer):
     def get_updates(self, loss, params, param_lr_mults=None):
         if param_lr_mults is None:
             param_lr_mults = [1.0] * len(params)
-        
+
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -508,15 +508,16 @@ class Adam(Optimizer):
             vhats = [K.zeros(1) for _ in params]
         self.weights = [self.iterations] + ms + vs + vhats
 
-        for p, g, m, v, vhat, lr_mult in zip(params, grads, ms, vs, vhats, param_lr_mults):
+        for p, g, m, v, vhat, lr_mult in zip(params, grads, ms, vs, vhats,
+                                             param_lr_mults):
             m_t = (self.beta_1 * m) + (1. - self.beta_1) * g
             v_t = (self.beta_2 * v) + (1. - self.beta_2) * K.square(g)
             if self.amsgrad:
                 vhat_t = K.maximum(vhat, v_t)
-                p_t = p - lr_mult*lr_t * m_t / (K.sqrt(vhat_t) + self.epsilon)
+                p_t = p - lr_mult * lr_t * m_t / (K.sqrt(vhat_t) + self.epsilon)
                 self.updates.append(K.update(vhat, vhat_t))
             else:
-                p_t = p - lr_mult*lr_t * m_t / (K.sqrt(v_t) + self.epsilon)
+                p_t = p - lr_mult * lr_t * m_t / (K.sqrt(v_t) + self.epsilon)
 
             self.updates.append(K.update(m, m_t))
             self.updates.append(K.update(v, v_t))
@@ -573,10 +574,10 @@ class Adamax(Optimizer):
 
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params, param_lr_mults=None):
-        
+
         if param_lr_mults is None:
             param_lr_mults = [1.0] * len(params)
-        
+
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -599,7 +600,7 @@ class Adamax(Optimizer):
 
             m_t = (self.beta_1 * m) + (1. - self.beta_1) * g
             u_t = K.maximum(self.beta_2 * u, K.abs(g))
-            p_t = p - lr_mult* lr_t * m_t / (u_t + self.epsilon)
+            p_t = p - lr_mult * lr_t * m_t / (u_t + self.epsilon)
 
             self.updates.append(K.update(m, m_t))
             self.updates.append(K.update(u, u_t))
@@ -659,10 +660,10 @@ class Nadam(Optimizer):
 
     @interfaces.legacy_get_updates_support
     def get_updates(self, loss, params, param_lr_mults=None):
-        
-        
+
         if param_lr_mults is None:
             param_lr_mults = [1.0] * len(params)
+
         grads = self.get_gradients(loss, params)
         self.updates = [K.update_add(self.iterations, 1)]
 
@@ -696,7 +697,8 @@ class Nadam(Optimizer):
             self.updates.append(K.update(m, m_t))
             self.updates.append(K.update(v, v_t))
 
-            p_t = p - self.lr * lr_mult * m_t_bar / (K.sqrt(v_t_prime) + self.epsilon)
+            p_t = p - self.lr * lr_mult * m_t_bar / (K.sqrt(v_t_prime)
+                                                     + self.epsilon)
             new_p = p_t
 
             # Apply constraints.
