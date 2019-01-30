@@ -112,6 +112,7 @@ class Network(Layer):
         # This acts just like the `trainable` attribute of any layer instance.
         # It does not affect users of the underlying layers, only users of the
         # Network instance.
+        self.lr_mult = 1.0
         self.trainable = True
         self._is_compiled = False
         self._expects_training_arg = False
@@ -474,7 +475,7 @@ class Network(Layer):
             return []
         trainable_lr_mults = []
         for layer in self.layers:
-            trainable_lr_mults += layer.trainable_lr_mults
+            trainable_lr_mults += [self.lr_mult * x for x in layer.trainable_lr_mults]
         return trainable_lr_mults
 
     @property
